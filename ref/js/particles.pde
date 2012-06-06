@@ -56,7 +56,7 @@ class Particle {
   // カラー型の変数、自分の色を保持
   color c;
   
-  // コンストラクタ(Particle variablename = new Particle() で呼び出される)
+  // コンストラクタ(Particle variablename = new Particle(x, y) で呼び出される)
   Particle (float xpos, float ypos) {
     this.x  = xpos;
     this.y  = ypos;
@@ -84,7 +84,7 @@ class Particle {
     // 配列の大きさの内側にある場合だけ、描画を実行
     if (0 <= p && p <= ww*wh) {
       // 自分の色(c)を、引数で渡された配列(i)に書き込む
-      i[ww*ty + tx] = this.c;
+      i[p] = this.c;
     }
     // intの配列を戻り値として返す
     return i;
