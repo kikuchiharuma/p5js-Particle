@@ -1,10 +1,11 @@
 // パーティクルオブジェクトの配列を作成
-Particle[] particles = new Particle[10000];
+Particle[] particles = new Particle[50000];
 
 // 初期値の設定
 int ww = 600; // 描画領域の幅
 int wh = 600; // 描画領域の高さ
 int m  = 0;   // 四辺の計算上のマージン(外へ飛び出すパーティクルの処理用)
+int ws = 200;  // パーティクル速度の初期値
 
 // 描画用のイメージ型オブジェクトを、描画領域の大きさに合わせて作成
 PImage img = createImage(ww, wh, ARGB);
@@ -41,7 +42,9 @@ void draw() {
   img.pixels = p;
   img.updatePixels();
   // 画面をリフレッシュ
-  background(255);
+  //background(255);
+  fill(255, 50);
+  rect(0, 0, ww, wh);
   // 画面を描画
   image(img, 0, 0);
 }
@@ -57,7 +60,7 @@ class Particle {
   Particle (float xpos, float ypos) {
     this.x  = xpos;
     this.y  = ypos;
-    this.s  = 0.2;
+    this.s  = ws;
     this.ss = this.s;
     this.d  = random(TWO_PI);
     this.c  = color(int(random(255)), int(random(255)), int(random(255)), 255);
@@ -92,14 +95,18 @@ class Particle {
     if ( this.x <=m || this.x >= ww-m || this.y <= m || this.y >= wh-m) {
       // はみ出ていたら、進行方向方向を反転させる
       this.d -= PI;
-    }   
+    }
   }
   
-  // 重力を生じさせるプライベートメソッド
+  // マウスポインタの位置を中心に斥力を生じさせるプライベートメソッド
   private void assignGravity() {
-    this.ss += (this.ss - this.s) * 0.01;
-    if (this.x > ww/2-1 && this.x < ww/2) {
-      this.ss -= this.ss * 0.5;
-    }
+    // マウス座標のベクトル(描画領域中央が原点になるように変換)
+    v1 = new PVector(mouseX-ww/2, mouseY-wh/2);
+    // 現在の位置のベクトル(描画領域中央を原点になるように変換)
+    v2 = new PVector(this.x-ww/2, this.y-wh/2);
+    // 二つのベクトル間の距離を計算
+    float dt = PVector.dist(v1, v2);
+    // 距離に応じて速度を変更
+    this.ss = this.s*(1/dt);
   }
 }
